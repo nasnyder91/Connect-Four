@@ -11,6 +11,12 @@ body, html{
   grid-gap: 0;
 }
 
+.boardSection{
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
 .aboveBoardSection{
   background-repeat: no-repeat;
   background-position: center;

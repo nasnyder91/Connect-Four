@@ -10,10 +10,10 @@ $(document).ready(function(){
 
   //Create board
   for(var i = 0; i < 7; i++){
-    boardhtml += "<div id='box"+i+"' class='aboveBoardSection'></div>";
+    boardhtml += "<div id='box"+i+"' class='aboveBoardSection' col="+i+"></div>";
   };
   for(var i = 7; i < 49; i++){
-    boardhtml += "<img id='box"+i+"' class='img-responsive' src='img/ConnectFour.png'>";
+    boardhtml += "<img id='box"+i+"' class='boardSection img-responsive' src='img/ConnectFour.png' taken='false'>";
   };
   $(".board").html(boardhtml);
 
@@ -23,7 +23,6 @@ $(document).ready(function(){
       boardArr[r].push($("#box" + (c+(7*r))));
     };
   };
-  console.log(boardArr);
 
   //Show piece above board
   $(".aboveBoardSection").hover(function(){
@@ -34,7 +33,14 @@ $(document).ready(function(){
 
   //Drop a piece, make a turn
   $(".aboveBoardSection").click(function(){
-    
+    var col = $(this).attr("col");
+    for(var r = 6; r > 0; r--){
+      if($(boardArr[r][col]).attr("taken") != "true"){
+        $(boardArr[r][col]).css("background-image", piece);
+        $(boardArr[r][col]).attr("taken", true);
+        break;
+      }
+    };
 
 
     if(turn == "red"){
