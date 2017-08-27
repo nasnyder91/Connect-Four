@@ -5,6 +5,14 @@ body, html{
 }
 
 .game{
+
+}
+
+.infoBoard{
+  position: fixed;
+  width: 20vw;
+  right: 0;
+  top: 0;
 }
 
 .board{
