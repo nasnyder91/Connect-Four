@@ -69,9 +69,12 @@ $(document).ready(function(){
       };
 
     };
-    checkWin();
-    changeTurn();
     $(this).css("background-image", "none");
+    if(checkWin() == true){
+      gameWin(turn);
+    } else{
+      changeTurn();
+    }
   });
 
   //Resize/align elements on browser window resize
@@ -149,8 +152,8 @@ $(document).ready(function(){
           counter = 0;
         };
         if(counter == 4){
-          gameWin(turn);
-          return;
+
+          return true;
         };
       };
       counter = 0;
@@ -165,8 +168,8 @@ $(document).ready(function(){
           counter = 0;
         };
         if(counter == 4){
-          gameWin(turn);
-          return;
+
+          return true;
         };
       };
       counter = 0;
@@ -180,8 +183,8 @@ $(document).ready(function(){
             if($(boardArr[r+1][c+1]).attr("player") == turn){
               if($(boardArr[r+2][c+2]).attr("player") == turn){
                 if($(boardArr[r+3][c+3]).attr("player") == turn){
-                  gameWin(turn);
-                  return;
+
+                  return true;
                 };
               };
             };
@@ -190,8 +193,8 @@ $(document).ready(function(){
             if($(boardArr[r+1][c-1]).attr("player") == turn){
               if($(boardArr[r+2][c-2]).attr("player") == turn){
                 if($(boardArr[r+3][c-3]).attr("player") == turn){
-                  gameWin(turn);
-                  return;
+
+                  return true;
                 };
               };
             };
@@ -201,8 +204,8 @@ $(document).ready(function(){
             if($(boardArr[r+1][c+1]).attr("player") == turn){
               if($(boardArr[r+2][c+2]).attr("player") == turn){
                 if($(boardArr[r+3][c+3]).attr("player") == turn){
-                  gameWin(turn);
-                  return;
+
+                  return true;
                 };
               };
             };
@@ -210,8 +213,8 @@ $(document).ready(function(){
             if($(boardArr[r+1][c-1]).attr("player") == turn){
               if($(boardArr[r+2][c-2]).attr("player") == turn){
                 if($(boardArr[r+3][c-3]).attr("player") == turn){
-                  gameWin(turn);
-                  return;
+
+                  return true;
                 };
               };
             };
@@ -229,9 +232,11 @@ $(document).ready(function(){
     if(player == "red"){
       redWins++;
       $(".redWins").html(redWins);
+      turn = "red";
     }else{
       blackWins++;
       $(".blackWins").html(blackWins);
+      turn = "black";
     }
   };
 
