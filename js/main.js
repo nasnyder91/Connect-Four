@@ -3,12 +3,14 @@ $(document).ready(function(){
   //Global variables
   var boardArr = [[],[],[],[],[],[],[]];
   var piecesArr = [];
-
   var boardhtml = "";
-
   var piece = "url(img/red.png)";
-
   var turn = "red";
+  var redWins = 0;
+  var blackWins = 0;
+
+  $("#switchTurn").css("background-color", "red");
+  $("#switchTurn").css("color", "black");
 
 
   //Create board
@@ -36,6 +38,7 @@ $(document).ready(function(){
 
   //Drop a piece, make a turn
   $(".aboveBoardSection").click(function(){
+    $("#switchTurn").prop("disabled", true);
     var col = $(this).attr("col");
 
     var beginTop = $(this).offset().top - $(".game").scrollTop();
@@ -47,6 +50,9 @@ $(document).ready(function(){
     noURLPiece = noURLPiece.replace(")", "");
 
     for(var r = 6; r > 0; r--){
+      if(r == 1 && $(boardArr[r][col]).attr("taken") == "true"){
+        return;
+      }
       if($(boardArr[r][col]).attr("taken") != "true"){
         endTop = $(boardArr[r][col]).offset().top - $(".game").scrollTop();
         $(".pieces").append("<img id='piece"+r+col+"' class='piece img-responsive' row='"+r+"' col='"+col+"' src='"+noURLPiece+"'>");
@@ -57,7 +63,7 @@ $(document).ready(function(){
 
         piecesArr.push($("#piece"+r+col+""));
 
-        $(boardArr[r][col]).attr("taken", true);
+        $(boardArr[r][col]).attr("taken", "true");
         $(boardArr[r][col]).attr("player", turn);
         break;
       };
@@ -65,6 +71,7 @@ $(document).ready(function(){
     };
     checkWin();
     changeTurn();
+    $(this).css("background-image", "none");
   });
 
   //Resize/align elements on browser window resize
@@ -83,17 +90,21 @@ $(document).ready(function(){
     if(turn == "red"){
       piece = "url(img/black.png)";
       turn = "black";
+      $("#switchTurn").css("background-color", "black");
+      $("#switchTurn").css("color", "white");
       return;
     };
     if(turn == "black"){
       piece = "url(img/red.png)";
       turn = "red";
+      $("#switchTurn").css("background-color", "red");
+      $("#switchTurn").css("color", "black");
       return;
     };
   };
 
   //Click new game button
-  $("#newGameBtn").click(function(){
+  $(".newGameBtn").click(function(){
     newGame();
   });
 
@@ -107,11 +118,27 @@ $(document).ready(function(){
     }
 
     $(".pieces").html("");
+
+    $("#switchTurn").prop("disabled", false);
   };
 
   //Check win
   function checkWin(){
     var counter = 0;
+
+    //Check if board is full
+    for(var r = 1; r < 7; r++){
+      for(var c = 0; c < 7; c++){
+        if($(boardArr[r][c]).attr("taken") == "true"){
+          counter++;
+        };
+      };
+      if(counter == 42){
+        gameDraw();
+        return;
+      };
+    };
+    counter = 0;
 
     //Check rows for win
     for(var r = 6; r > 0; r--){
@@ -122,7 +149,7 @@ $(document).ready(function(){
           counter = 0;
         };
         if(counter == 4){
-          console.log(turn + " wins");
+          gameWin(turn);
           return;
         };
       };
@@ -138,7 +165,7 @@ $(document).ready(function(){
           counter = 0;
         };
         if(counter == 4){
-          console.log(turn + " wins");
+          gameWin(turn);
           return;
         };
       };
@@ -149,12 +176,11 @@ $(document).ready(function(){
     for(var r = 1; r < 4; r++){
       for(var c = 0; c < 7; c++){
         if($(boardArr[r][c]).attr("player") == turn){
-          console.log("asdfas");
           if(c < 3){
             if($(boardArr[r+1][c+1]).attr("player") == turn){
               if($(boardArr[r+2][c+2]).attr("player") == turn){
                 if($(boardArr[r+3][c+3]).attr("player") == turn){
-                  console.log(turn + "wins");
+                  gameWin(turn);
                   return;
                 };
               };
@@ -164,7 +190,7 @@ $(document).ready(function(){
             if($(boardArr[r+1][c-1]).attr("player") == turn){
               if($(boardArr[r+2][c-2]).attr("player") == turn){
                 if($(boardArr[r+3][c-3]).attr("player") == turn){
-                  console.log(turn + "wins");
+                  gameWin(turn);
                   return;
                 };
               };
@@ -175,7 +201,7 @@ $(document).ready(function(){
             if($(boardArr[r+1][c+1]).attr("player") == turn){
               if($(boardArr[r+2][c+2]).attr("player") == turn){
                 if($(boardArr[r+3][c+3]).attr("player") == turn){
-                  console.log(turn + "wins");
+                  gameWin(turn);
                   return;
                 };
               };
@@ -184,7 +210,7 @@ $(document).ready(function(){
             if($(boardArr[r+1][c-1]).attr("player") == turn){
               if($(boardArr[r+2][c-2]).attr("player") == turn){
                 if($(boardArr[r+3][c-3]).attr("player") == turn){
-                  console.log(turn + "wins");
+                  gameWin(turn);
                   return;
                 };
               };
@@ -195,7 +221,36 @@ $(document).ready(function(){
     };
   };
 
+  //Game has been won
+  function gameWin(player){
+    var playerColor = player.toUpperCase();
+    $("#winMsg").html(playerColor + " WINS!!!");
+    $("#winModal").modal("show");
+    if(player == "red"){
+      redWins++;
+      $(".redWins").html(redWins);
+    }else{
+      blackWins++;
+      $(".blackWins").html(blackWins);
+    }
+  };
 
+  //Shows win modal if all sections filled
+  function gameDraw(){
+    $("#winMsg").html("Game is a draw!!  Play Again!");
+    $("#winModal").modal("show");
+  }
 
+  //Clear scoreboard when button is pressed
+  $("#clearScoresBtn").click(function(){
+    redWins = 0;
+    blackWins = 0;
+    $(".redWins").html(0);
+    $(".blackWins").html(0);
+  });
 
+  //Switch turns at start of game
+  $("#switchTurn").click(function(){
+    changeTurn();
+  });
 });
